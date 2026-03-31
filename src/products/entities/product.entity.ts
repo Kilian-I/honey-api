@@ -1,45 +1,52 @@
-//entites/products.entity.ts
 import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn } from 'typeorm';
 
 export enum ProductUnit {
-  UNIT = 'unit',     // Pour le B2C (le pot)
-  PALLET = 'pallet'  // Pour le B2B
+    UNIT = 'unit',    // Pour le B2C (le pot)
+    PALLET = 'pallet'  // Pour le B2B
 }
 
 @Entity('products')
 export class Product {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
+    @PrimaryGeneratedColumn('uuid')
+    id!: string; // Ajoute ! ici
 
-  @Column()
-  name: string;
+    @Column()
+    name!: string;
 
-  @Column('text')
-  description: string;
+    @Column('text')
+    description!: string;
 
-  @Column()
-  slug: string; // Pour des URLs SEO-friendly
+    @Column({ unique: true })
+    slug!: string;
 
-  // --- PRICING STRIPE ---
-  @Column()
-  stripeProductId: string; // ID produit dans Stripe
+    // --- PRICING STRIPE ---
+    @Column()
+    stripeProductId!: string;
 
-  @Column()
-  priceB2C: number; // Prix en centimes (ex: 850 pour 8.50€)
+    @Column()
+    priceB2C!: number;
 
-  @Column()
-  priceB2B: number; // Prix palette HT en centimes
+    @Column()
+    priceB2B!: number;
 
-  // --- LOGISTIQUE ---
-  @Column({ default: 0 })
-  stockQuantity: number; // Quantité totale en pots individuels
+    // --- LOGISTIQUE ---
+    @Column({ default: 0 })
+    stockQuantity!: number; 
 
-  @Column({ default: 120 })
-  itemsPerPallet: number; // Combien de pots dans une palette
+    @Column({ default: 120 })
+    itemsPerPallet!: number;
 
-  @Column('decimal')
-  weightPerUnit: number; // Poids en kg pour calcul frais de port
+    @Column({
+        type: 'decimal',
+        precision: 10,
+        scale: 3,
+        transformer: {
+            to: (value: number) => value,
+            from: (value: string) => parseFloat(value),
+        },
+    })
+    weightPerUnit!: number;
 
-  @CreateDateColumn()
-  createdAt: Date;
+    @CreateDateColumn()
+    createdAt!: Date;
 }
